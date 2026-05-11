@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Menu, X, ShoppingBag, Heart, Search, ChevronDown, Star, Sparkles, ArrowRight, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
- 
+
 const STORAGE_KEYS = {
   PRODUCTS: 'lightweightProducts',
   CART: 'lightweightCart'
 };
- 
+
 const initialProducts = [
   { id: 1, name: 'Pearl Essence Studs', price: 899, category: 'Earrings', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&h=500&fit=crop', description: 'Elegant pearl studs with gold accents, perfect for daily elegance', featured: true, rating: 4.9 },
   { id: 2, name: 'Gold Hoop Elegance', price: 1299, category: 'Earrings', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&h=500&fit=crop', description: 'Classic gold hoops with modern sophistication', featured: true, rating: 4.8 },
@@ -23,7 +23,7 @@ const initialProducts = [
   { id: 13, name: 'Diamond Infinity Necklace', price: 7999, category: 'Premium Collection', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&h=500&fit=crop', description: 'Exquisite diamond necklace, the pinnacle of luxury', featured: true, rating: 5.0 },
   { id: 14, name: 'Crown Jewel Set', price: 8999, category: 'Premium Collection', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&h=500&fit=crop', description: 'Ultimate luxury collection, crafted for royalty', featured: true, rating: 5.0 }
 ];
- 
+
 export default function App() {
   const [products, setProducts] = useState(() => {
     try {
@@ -33,7 +33,7 @@ export default function App() {
       return initialProducts;
     }
   });
- 
+
   const [cart, setCart] = useState(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.CART);
@@ -42,7 +42,7 @@ export default function App() {
       return [];
     }
   });
- 
+
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
@@ -53,29 +53,29 @@ export default function App() {
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
   const [newProduct, setNewProduct] = useState({ name: '', price: '', category: 'Earrings', description: '', image: '' });
- 
+
   const mountedRef = useRef(true);
- 
+
   useEffect(() => {
     return () => {
       mountedRef.current = false;
     };
   }, []);
- 
+
   useEffect(() => {
     if (mountedRef.current) {
       localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
     }
   }, [products]);
- 
+
   useEffect(() => {
     if (mountedRef.current) {
       localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart));
     }
   }, [cart]);
- 
+
   const categories = useMemo(() => ['All', ...new Set(products.map(p => p.category))], [products]);
- 
+
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
       const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
@@ -84,9 +84,9 @@ export default function App() {
       return matchesCategory && matchesSearch;
     });
   }, [products, selectedCategory, searchQuery]);
- 
+
   const cartTotal = useMemo(() => cart.reduce((sum, item) => sum + (item.price * item.quantity), 0), [cart]);
- 
+
   const addToCart = useCallback((product) => {
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.id === product.id);
@@ -100,11 +100,11 @@ export default function App() {
     });
     setSelectedProduct(null);
   }, []);
- 
+
   const removeFromCart = useCallback((productId) => {
     setCart(prevCart => prevCart.filter(item => item.id !== productId));
   }, []);
- 
+
   const updateQuantity = useCallback((productId, quantity) => {
     if (quantity <= 0) {
       removeFromCart(productId);
@@ -116,24 +116,24 @@ export default function App() {
       );
     }
   }, [removeFromCart]);
- 
+
   const handleWhatsAppOrder = useCallback(() => {
     if (cart.length === 0) {
       alert('Your cart is empty!');
       return;
     }
- 
+
     const cartMessage = cart
       .map(item => `${item.name} × ${item.quantity} — ₹${item.price}`)
       .join('\n');
- 
+
     const message = encodeURIComponent(
       `Hi, I would like to order these jewellery products:\n\n${cartMessage}\n\nTotal: ₹${cartTotal}\n\nPlease share availability and delivery details.`
     );
- 
+
     window.open(`https://wa.me/919677690323?text=${message}`, '_blank');
   }, [cart, cartTotal]);
- 
+
   const handleAdminLogin = useCallback((password) => {
     if (password === 'lightweight2024') {
       setIsAdminMode(true);
@@ -145,13 +145,13 @@ export default function App() {
       setAdminPassword('');
     }
   }, []);
- 
+
   const handleAddProduct = useCallback(() => {
     if (!newProduct.name || !newProduct.price) {
       alert('Please fill all required fields');
       return;
     }
- 
+
     const product = {
       id: Math.max(...products.map(p => p.id), 0) + 1,
       ...newProduct,
@@ -159,31 +159,31 @@ export default function App() {
       featured: false,
       rating: 4.8
     };
- 
+
     setProducts(prevProducts => [...prevProducts, product]);
     setNewProduct({ name: '', price: '', category: 'Earrings', description: '', image: '' });
     alert('Product added successfully!');
   }, [products, newProduct]);
- 
+
   const handleDeleteProduct = useCallback((id) => {
     setProducts(prevProducts => prevProducts.filter(p => p.id !== id));
   }, []);
- 
+
   const handleLogout = useCallback(() => {
     setIsAdminMode(false);
     setCurrentPage('home');
   }, []);
- 
+
   const handleNavigate = useCallback((page) => {
     setCurrentPage(page);
     setIsMenuOpen(false);
     window.scrollTo(0, 0);
   }, []);
- 
+
   const handleSettingsClick = useCallback(() => {
     setShowAdminLogin(true);
   }, []);
- 
+
   return (
     <div className="bg-black overflow-hidden">
       {/* Navigation Bar */}
@@ -205,7 +205,7 @@ export default function App() {
               Light Weight
             </span>
           </motion.button>
- 
+
           <div className="hidden md:flex items-center gap-8">
             {['home', 'shop', 'about'].map(page => (
               <motion.button
@@ -218,7 +218,7 @@ export default function App() {
               </motion.button>
             ))}
           </div>
- 
+
           <div className="flex items-center gap-4">
             {/* Settings Button */}
             <motion.button
@@ -230,7 +230,7 @@ export default function App() {
             >
               <Settings className="w-6 h-6 text-white" />
             </motion.button>
- 
+
             {/* Cart Button */}
             <motion.button
               onClick={() => setIsCartOpen(!isCartOpen)}
@@ -250,7 +250,7 @@ export default function App() {
                 </motion.span>
               )}
             </motion.button>
- 
+
             {/* Menu Toggle - Mobile */}
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -262,7 +262,7 @@ export default function App() {
             </motion.button>
           </div>
         </div>
- 
+
         {/* Mobile Menu */}
         <AnimatePresence>
           {isMenuOpen && (
@@ -285,7 +285,7 @@ export default function App() {
           )}
         </AnimatePresence>
       </motion.nav>
- 
+
       {/* Main Content */}
       <div className="pt-16">
         {currentPage === 'home' && <HeroSection onNavigate={handleNavigate} />}
@@ -313,7 +313,7 @@ export default function App() {
           />
         )}
       </div>
- 
+
       {/* Floating WhatsApp Button */}
       <motion.a
         href="https://wa.me/919677690323"
@@ -330,7 +330,7 @@ export default function App() {
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-5.031 1.378c-3.055 2.364-3.905 6.75-1.896 10.217 1.51 2.755 4.392 4.751 7.612 4.751.842 0 1.707-.107 2.708-.32l.261.013c3.426 0 6.311-2.769 6.311-6.195 0-1.232-.279-2.4-.772-3.478A9.234 9.234 0 0012.04 3.5c-3.105 0-5.99 1.806-7.44 4.479" />
         </svg>
       </motion.a>
- 
+
       {/* Cart Drawer */}
       <CartDrawer
         isOpen={isCartOpen}
@@ -341,14 +341,14 @@ export default function App() {
         onUpdateQuantity={updateQuantity}
         onWhatsAppOrder={handleWhatsAppOrder}
       />
- 
+
       {/* Quick View Modal */}
       <QuickViewModal
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         onAddToCart={addToCart}
       />
- 
+
       {/* Admin Login Modal */}
       <AdminLoginModal
         isOpen={showAdminLogin}
@@ -363,17 +363,17 @@ export default function App() {
     </div>
   );
 }
- 
+
 const HeroSection = ({ onNavigate }) => (
   <div className="relative h-screen bg-black overflow-hidden">
     <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-900 to-black"></div>
- 
+
     <motion.div
       className="absolute top-0 right-0 w-96 h-96 bg-gradient-radial from-yellow-400/20 to-transparent rounded-full blur-3xl"
       animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
       transition={{ duration: 8, repeat: Infinity }}
     ></motion.div>
- 
+
     <div className="relative h-full flex items-center justify-center px-4">
       <motion.div
         className="text-center z-10"
@@ -384,7 +384,7 @@ const HeroSection = ({ onNavigate }) => (
         <motion.div className="mb-8 flex justify-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
           <Sparkles className="w-12 h-12 text-yellow-400" />
         </motion.div>
- 
+
         <motion.h1
           className="text-7xl md:text-8xl font-thin text-white mb-6 tracking-tight"
           style={{ fontFamily: 'Georgia, serif' }}
@@ -394,7 +394,7 @@ const HeroSection = ({ onNavigate }) => (
         >
           Light Weight
         </motion.h1>
- 
+
         <motion.p
           className="text-xl md:text-2xl text-yellow-300 mb-8 tracking-widest uppercase font-light"
           initial={{ opacity: 0 }}
@@ -403,7 +403,7 @@ const HeroSection = ({ onNavigate }) => (
         >
           Luxury Jewellery Reimagined
         </motion.p>
- 
+
         <motion.p
           className="text-gray-300 text-lg max-w-2xl mx-auto mb-12 leading-relaxed"
           initial={{ opacity: 0 }}
@@ -412,7 +412,7 @@ const HeroSection = ({ onNavigate }) => (
         >
           Crafted elegance that transcends weight. Discover our curated collection of premium lightweight jewellery designed for the modern woman.
         </motion.p>
- 
+
         <motion.button
           onClick={() => onNavigate('shop')}
           className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold rounded-full hover:shadow-2xl hover:shadow-yellow-400/50 transition-all duration-300 group flex items-center justify-center mx-auto gap-3"
@@ -426,7 +426,7 @@ const HeroSection = ({ onNavigate }) => (
           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </motion.button>
       </motion.div>
- 
+
       <motion.div
         className="absolute bottom-10 left-1/2 -translate-x-1/2"
         animate={{ y: [0, 10, 0] }}
@@ -439,7 +439,7 @@ const HeroSection = ({ onNavigate }) => (
     </div>
   </div>
 );
- 
+
 const ShopSection = ({ products, categories, selectedCategory, searchQuery, onCategoryChange, onSearchChange, onAddToCart, onQuickView }) => (
   <div className="min-h-screen bg-gradient-to-b from-black to-slate-900 py-20 px-4">
     <motion.div
@@ -454,7 +454,7 @@ const ShopSection = ({ products, categories, selectedCategory, searchQuery, onCa
       </h2>
       <div className="w-20 h-1 bg-gradient-to-r from-yellow-400 to-transparent"></div>
     </motion.div>
- 
+
     <div className="max-w-7xl mx-auto mb-12">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <motion.div
@@ -473,7 +473,7 @@ const ShopSection = ({ products, categories, selectedCategory, searchQuery, onCa
             className="w-full pl-12 pr-4 py-3 bg-white/10 border border-yellow-400/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400/50 transition-all"
           />
         </motion.div>
- 
+
         <motion.div
           className="relative"
           initial={{ opacity: 0, y: 10 }}
@@ -493,7 +493,7 @@ const ShopSection = ({ products, categories, selectedCategory, searchQuery, onCa
           <ChevronDown className="absolute right-4 top-4 w-5 h-5 text-gray-400 pointer-events-none" />
         </motion.div>
       </div>
- 
+
       <div className="flex flex-wrap gap-3 overflow-x-auto pb-4">
         {categories.map((cat, idx) => (
           <motion.button
@@ -515,7 +515,7 @@ const ShopSection = ({ products, categories, selectedCategory, searchQuery, onCa
         ))}
       </div>
     </div>
- 
+
     <div className="max-w-7xl mx-auto">
       {products.length > 0 ? (
         <motion.div
@@ -552,7 +552,7 @@ const ShopSection = ({ products, categories, selectedCategory, searchQuery, onCa
     </div>
   </div>
 );
- 
+
 const ProductCard = ({ product, onAddToCart, onQuickView, index }) => (
   <motion.div
     className="group cursor-pointer"
@@ -572,7 +572,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, index }) => (
         whileHover={{ scale: 1.1 }}
         transition={{ duration: 0.6 }}
       />
- 
+
       {product.featured && (
         <motion.div
           className="absolute top-4 right-4 px-3 py-1 bg-yellow-400/90 text-black rounded-full text-xs font-semibold"
@@ -583,7 +583,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, index }) => (
           Featured
         </motion.div>
       )}
- 
+
       <motion.div
         className="absolute inset-0 bg-black/40 flex items-end justify-between p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
       >
@@ -607,7 +607,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, index }) => (
         </div>
       </motion.div>
     </motion.div>
- 
+
     <motion.div
       className="pt-4"
       initial={{ opacity: 0 }}
@@ -637,7 +637,7 @@ const ProductCard = ({ product, onAddToCart, onQuickView, index }) => (
     </motion.div>
   </motion.div>
 );
- 
+
 const QuickViewModal = ({ product, onClose, onAddToCart }) => (
   <AnimatePresence>
     {product && (
@@ -665,7 +665,7 @@ const QuickViewModal = ({ product, onClose, onAddToCart }) => (
               transition={{ duration: 0.6 }}
             />
           </div>
- 
+
           <div className="md:w-1/2 p-8 flex flex-col justify-between">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -677,7 +677,7 @@ const QuickViewModal = ({ product, onClose, onAddToCart }) => (
               </p>
               <h2 className="text-3xl font-light text-white mb-2">{product.name}</h2>
               <p className="text-gray-400 mb-6 leading-relaxed">{product.description}</p>
- 
+
               <div className="flex items-center gap-2 mb-6">
                 <div className="flex gap-1">
                   {[...Array(5)].map((_, i) => (
@@ -691,10 +691,10 @@ const QuickViewModal = ({ product, onClose, onAddToCart }) => (
                 </div>
                 <span className="text-yellow-400 font-medium">{product.rating}</span>
               </div>
- 
+
               <p className="text-4xl font-light text-yellow-400 mb-8">₹{product.price}</p>
             </motion.div>
- 
+
             <motion.div
               className="space-y-3"
               initial={{ opacity: 0, y: 10 }}
@@ -718,7 +718,7 @@ const QuickViewModal = ({ product, onClose, onAddToCart }) => (
               </button>
             </motion.div>
           </div>
- 
+
           <motion.button
             onClick={onClose}
             className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all z-10"
@@ -732,7 +732,7 @@ const QuickViewModal = ({ product, onClose, onAddToCart }) => (
     )}
   </AnimatePresence>
 );
- 
+
 const CartDrawer = ({ isOpen, cart, cartTotal, onClose, onRemove, onUpdateQuantity, onWhatsAppOrder }) => (
   <AnimatePresence>
     {isOpen && (
@@ -744,7 +744,7 @@ const CartDrawer = ({ isOpen, cart, cartTotal, onClose, onRemove, onUpdateQuanti
           exit={{ opacity: 0 }}
           onClick={onClose}
         ></motion.div>
- 
+
         <motion.div
           className="fixed right-0 top-0 h-screen w-full max-w-md bg-gradient-to-b from-slate-900 to-black border-l border-yellow-400/20 z-50 flex flex-col"
           initial={{ x: '100%' }}
@@ -763,7 +763,7 @@ const CartDrawer = ({ isOpen, cart, cartTotal, onClose, onRemove, onUpdateQuanti
               <X className="w-6 h-6 text-white" />
             </motion.button>
           </div>
- 
+
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {cart.length > 0 ? (
               <>
@@ -778,10 +778,10 @@ const CartDrawer = ({ isOpen, cart, cartTotal, onClose, onRemove, onUpdateQuanti
                     <div className="h-32 overflow-hidden rounded-lg mb-4 bg-black/40">
                       <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                     </div>
- 
+
                     <h3 className="text-white font-medium mb-2">{item.name}</h3>
                     <p className="text-yellow-400 text-sm mb-3">₹{item.price}</p>
- 
+
                     <div className="flex items-center gap-3">
                       <motion.button
                         onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
@@ -824,7 +824,7 @@ const CartDrawer = ({ isOpen, cart, cartTotal, onClose, onRemove, onUpdateQuanti
               </motion.div>
             )}
           </div>
- 
+
           {cart.length > 0 && (
             <motion.div
               className="border-t border-yellow-400/10 p-6 space-y-4"
@@ -835,7 +835,7 @@ const CartDrawer = ({ isOpen, cart, cartTotal, onClose, onRemove, onUpdateQuanti
                 <span className="text-gray-400 text-lg">Subtotal:</span>
                 <span className="text-2xl font-light text-yellow-400">₹{cartTotal}</span>
               </div>
- 
+
               <motion.button
                 onClick={onWhatsAppOrder}
                 className="w-full px-6 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-green-500/50 transition-all flex items-center justify-center gap-2"
@@ -847,7 +847,7 @@ const CartDrawer = ({ isOpen, cart, cartTotal, onClose, onRemove, onUpdateQuanti
                 </svg>
                 Order via WhatsApp
               </motion.button>
- 
+
               <motion.button
                 onClick={onClose}
                 className="w-full px-6 py-3 bg-white/10 border border-yellow-400/30 text-white font-semibold rounded-lg hover:bg-white/20 transition-all"
@@ -863,7 +863,7 @@ const CartDrawer = ({ isOpen, cart, cartTotal, onClose, onRemove, onUpdateQuanti
     )}
   </AnimatePresence>
 );
- 
+
 const AboutSection = () => (
   <div className="min-h-screen bg-gradient-to-b from-slate-900 to-black py-20 px-4">
     <div className="max-w-5xl mx-auto">
@@ -879,7 +879,7 @@ const AboutSection = () => (
         </h2>
         <div className="w-20 h-1 bg-gradient-to-r from-yellow-400 to-transparent"></div>
       </motion.div>
- 
+
       <motion.div
         className="space-y-8 text-gray-300 leading-relaxed"
         initial={{ opacity: 0, y: 20 }}
@@ -890,16 +890,16 @@ const AboutSection = () => (
         <p className="text-xl">
           Light Weight Jewellery was born from a simple vision: to create luxury pieces that celebrate modern elegance without the burden of weight. Each piece is meticulously crafted by artisans who understand the delicate balance between sophistication and comfort.
         </p>
- 
+
         <p className="text-xl">
           We believe that luxury isn't about opulence alone—it's about the feeling you wear. Our jewelry transcends traditional boundaries, designed for the contemporary woman who values both style and substance.
         </p>
- 
+
         <p className="text-xl">
           From our curated collections to our personalized service, every detail reflects our commitment to excellence. We don't just create jewelry; we create heirlooms that celebrate your unique story.
         </p>
       </motion.div>
- 
+
       <motion.div
         className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16"
         initial="hidden"
@@ -932,7 +932,7 @@ const AboutSection = () => (
     </div>
   </div>
 );
- 
+
 const AdminPanel = ({ products, newProduct, onNewProductChange, onAddProduct, onDeleteProduct, onLogout }) => (
   <div className="min-h-screen bg-gradient-to-b from-black to-slate-900 py-20 px-4">
     <div className="max-w-6xl mx-auto">
@@ -945,7 +945,7 @@ const AdminPanel = ({ products, newProduct, onNewProductChange, onAddProduct, on
         <div className="w-20 h-1 bg-gradient-to-r from-yellow-400 to-transparent"></div>
         <p className="text-gray-400 mt-4">Manage your jewelry inventory and add new products</p>
       </motion.div>
- 
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <motion.div
           className="bg-gradient-to-br from-slate-800 to-black border border-yellow-400/20 rounded-xl p-8"
@@ -1002,7 +1002,7 @@ const AdminPanel = ({ products, newProduct, onNewProductChange, onAddProduct, on
             </motion.button>
           </div>
         </motion.div>
- 
+
         <motion.div
           className="bg-gradient-to-br from-slate-800 to-black border border-yellow-400/20 rounded-xl p-8"
           initial={{ opacity: 0, y: 20 }}
@@ -1036,7 +1036,7 @@ const AdminPanel = ({ products, newProduct, onNewProductChange, onAddProduct, on
           </div>
         </motion.div>
       </div>
- 
+
       <motion.div
         className="mt-8"
         initial={{ opacity: 0 }}
@@ -1055,7 +1055,7 @@ const AdminPanel = ({ products, newProduct, onNewProductChange, onAddProduct, on
     </div>
   </div>
 );
- 
+
 const AdminLoginModal = ({ isOpen, password, onPasswordChange, onLogin, onCancel }) => (
   <AnimatePresence>
     {isOpen && (
