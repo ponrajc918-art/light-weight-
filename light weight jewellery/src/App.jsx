@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Menu, X, ShoppingBag, Heart, Search, ChevronDown, Star, Sparkles, ArrowRight, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaWhatsapp } from 'react-icons/fa';
+
 const STORAGE_KEYS = {
   PRODUCTS: 'lightweightProducts',
   CART: 'lightweightCart'
@@ -933,336 +933,177 @@ const AboutSection = () => (
   </div>
 );
 
- // Admin Panel
-  const AdminPanel = React.memo(() => {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-slate-900 py-20 px-4">
-      <div className="max-w-6xl mx-auto">
-        
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-light text-white mb-2">
-            Admin Panel
-          </h1>
-
-          <div className="w-20 h-1 bg-gradient-to-r from-yellow-400 to-transparent"></div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
-          {/* Add Product */}
-          <div className="bg-gradient-to-br from-slate-800 to-black border border-yellow-400/20 rounded-xl p-8">
-            
-            <h2 className="text-2xl font-light text-white mb-6">
-              Add New Product
-            </h2>
-
-            <div className="space-y-4">
-
-              <input
-                type="text"
-                placeholder="Product Name"
-                value={newProduct.name}
-                onChange={(e) =>
-                  setNewProduct((prev) => ({
-                    ...prev,
-                    name: e.target.value,
-                  }))
-                }
-                className="w-full px-4 py-2 bg-white/10 border border-yellow-400/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400/50"
-              />
-
-              <input
-                type="number"
-                placeholder="Price (₹)"
-                value={newProduct.price}
-                onChange={(e) =>
-                  setNewProduct((prev) => ({
-                    ...prev,
-                    price: e.target.value,
-                  }))
-                }
-                className="w-full px-4 py-2 bg-white/10 border border-yellow-400/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400/50"
-              />
-
-              <select
-                value={newProduct.category}
-                onChange={(e) =>
-                  setNewProduct((prev) => ({
-                    ...prev,
-                    category: e.target.value,
-                  }))
-                }
-                className="w-full px-4 py-2 bg-white/10 border border-yellow-400/20 rounded-lg text-white focus:outline-none focus:border-yellow-400/50 appearance-none cursor-pointer"
-              >
-                {categories
-                  .filter((c) => c !== "All")
-                  .map((cat) => (
-                    <option
-                      key={cat}
-                      value={cat}
-                      className="text-black"
-                    >
-                      {cat}
-                    </option>
-                  ))}
-              </select>
-
-              <input
-                type="text"
-                placeholder="Description"
-                value={newProduct.description}
-                onChange={(e) =>
-                  setNewProduct((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
-                className="w-full px-4 py-2 bg-white/10 border border-yellow-400/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400/50"
-              />
-
-              <input
-                type="text"
-                placeholder="Image URL"
-                value={newProduct.image}
-                onChange={(e) =>
-                  setNewProduct((prev) => ({
-                    ...prev,
-                    image: e.target.value,
-                  }))
-                }
-                className="w-full px-4 py-2 bg-white/10 border border-yellow-400/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400/50"
-              />
-
-              <button
-                onClick={handleAddProduct}
-                className="w-full px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold rounded-lg hover:shadow-lg hover:shadow-yellow-400/50 transition-all duration-300"
-              >
-                Add Product
-              </button>
-            </div>
-          </div>
-
-          {/* Product List */}
-          <div className="bg-gradient-to-br from-slate-800 to-black border border-yellow-400/20 rounded-xl p-8">
-            
-            <h2 className="text-2xl font-light text-white mb-6">
-              Products ({products.length})
-            </h2>
-
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              
-              {products
-                .slice()
-                .reverse()
-                .map((product) => (
-                  <div
-                    key={product.id}
-                    className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-yellow-400/10 hover:border-yellow-400/30 transition-all duration-300"
-                  >
-                    <div className="flex-1">
-                      <p className="text-white font-medium text-sm">
-                        {product.name}
-                      </p>
-
-                      <p className="text-yellow-400 text-xs">
-                        ₹{product.price} • {product.category}
-                      </p>
-                    </div>
-
-                    <button
-                      onClick={() =>
-                        handleDeleteProduct(product.id)
-                      }
-                      className="px-3 py-1 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-all duration-300 text-xs font-medium"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Logout */}
-        <div className="mt-8">
-          <button
-            onClick={() => {
-              setIsAdminMode(false);
-              setCurrentPage("home");
-            }}
-            className="px-6 py-3 bg-white/10 border border-yellow-400/30 text-white font-semibold rounded-lg hover:bg-white/20 transition-all duration-300"
-          >
-            Logout from Admin
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-});
-  // Admin Login Modal
-  const AdminLoginModal = () => (
-  <AnimatePresence>
-    <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden px-4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      {/* Background */}
-      <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-md"
-        onClick={() => {
-          setAdminPassword("");
-          setCurrentPage("home");
-        }}
-      />
-
-      {/* Animated Glow */}
+const AdminPanel = ({ products, newProduct, onNewProductChange, onAddProduct, onDeleteProduct, onLogout }) => (
+  <div className="min-h-screen bg-gradient-to-b from-black to-slate-900 py-20 px-4">
+    <div className="max-w-6xl mx-auto">
       <motion.div
-        className="absolute w-[500px] h-[500px] rounded-full bg-yellow-400/10 blur-3xl"
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.3, 0.5, 0.3],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-        }}
-      />
-
-      {/* Modal */}
-      <motion.div
-        className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl border border-yellow-400/20 bg-gradient-to-br from-[#0f172a]/95 via-black to-[#111827]/95 shadow-[0_0_50px_rgba(250,204,21,0.08)] backdrop-blur-2xl"
-        initial={{ scale: 0.85, y: 30, opacity: 0 }}
-        animate={{ scale: 1, y: 0, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        transition={{
-          type: "spring",
-          damping: 18,
-          stiffness: 120,
-        }}
+        className="mb-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
       >
-        {/* Top Glow */}
-        <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
+        <h1 className="text-4xl font-light text-white mb-2">Admin Panel</h1>
+        <div className="w-20 h-1 bg-gradient-to-r from-yellow-400 to-transparent"></div>
+        <p className="text-gray-400 mt-4">Manage your jewelry inventory and add new products</p>
+      </motion.div>
 
-        {/* Content */}
-        <div className="relative p-8 md:p-10">
-
-          {/* Icon */}
-          <motion.div
-            className="mb-6 flex justify-center"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="flex h-20 w-20 items-center justify-center rounded-full border border-yellow-400/20 bg-yellow-400/10 backdrop-blur-xl shadow-[0_0_40px_rgba(250,204,21,0.15)]">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-10 w-10 text-yellow-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.7}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 11c1.657 0 3-1.567 3-3.5S13.657 4 12 4s-3 1.567-3 3.5S10.343 11 12 11zm0 2c-2.761 0-5 2.015-5 4.5V19h10v-1.5c0-2.485-2.239-4.5-5-4.5z"
-                />
-              </svg>
-            </div>
-          </motion.div>
-
-          {/* Title */}
-          <motion.div
-            className="mb-8 text-center"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-          >
-            <h2
-              className="text-3xl md:text-4xl font-thin text-white tracking-tight"
-              style={{ fontFamily: "Georgia, serif" }}
-            >
-              Admin Access
-            </h2>
-
-            <p className="mt-3 text-sm text-gray-400 tracking-wide">
-              Secure dashboard authentication
-            </p>
-          </motion.div>
-
-          {/* Input */}
-          <motion.div
-            className="mb-6"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <label className="mb-2 block text-sm uppercase tracking-[0.25em] text-yellow-400">
-              Password
-            </label>
-
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <motion.div
+          className="bg-gradient-to-br from-slate-800 to-black border border-yellow-400/20 rounded-xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <h2 className="text-2xl font-light text-white mb-6">Add New Product</h2>
+          <div className="space-y-4">
             <input
-              type="password"
-              placeholder="Enter admin password"
-              value={adminPassword}
-              onChange={(e) => setAdminPassword(e.target.value)}
-              onKeyDown={(e) =>
-                e.key === "Enter" && handleAdminLogin(adminPassword)
-              }
-              className="w-full rounded-2xl border border-yellow-400/20 bg-white/5 px-5 py-4 text-white placeholder-gray-500 outline-none backdrop-blur-xl transition-all duration-300 focus:border-yellow-400/60 focus:bg-white/[0.08] focus:shadow-[0_0_20px_rgba(250,204,21,0.12)]"
-              autoFocus
+              type="text"
+              placeholder="Product Name"
+              value={newProduct.name}
+              onChange={(e) => onNewProductChange({ ...newProduct, name: e.target.value })}
+              className="w-full px-4 py-2 bg-white/10 border border-yellow-400/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400/50"
             />
-          </motion.div>
-
-          {/* Buttons */}
-          <motion.div
-            className="flex gap-4"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
-          >
-            {/* Cancel */}
+            <input
+              type="number"
+              placeholder="Price (₹)"
+              value={newProduct.price}
+              onChange={(e) => onNewProductChange({ ...newProduct, price: e.target.value })}
+              className="w-full px-4 py-2 bg-white/10 border border-yellow-400/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400/50"
+            />
+            <select
+              value={newProduct.category}
+              onChange={(e) => onNewProductChange({ ...newProduct, category: e.target.value })}
+              className="w-full px-4 py-2 bg-white/10 border border-yellow-400/20 rounded-lg text-white focus:outline-none focus:border-yellow-400/50 appearance-none cursor-pointer"
+            >
+              {['Earrings', 'Necklaces', 'Bridal Collection', 'Daily Wear', 'Traditional', 'Premium Collection'].map(cat => (
+                <option key={cat} value={cat} className="text-black">{cat}</option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="Description"
+              value={newProduct.description}
+              onChange={(e) => onNewProductChange({ ...newProduct, description: e.target.value })}
+              className="w-full px-4 py-2 bg-white/10 border border-yellow-400/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400/50"
+            />
+            <input
+              type="text"
+              placeholder="Image URL"
+              value={newProduct.image}
+              onChange={(e) => onNewProductChange({ ...newProduct, image: e.target.value })}
+              className="w-full px-4 py-2 bg-white/10 border border-yellow-400/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400/50"
+            />
             <motion.button
-              onClick={() => {
-                setAdminPassword("");
-                setCurrentPage("home");
-              }}
-              className="flex-1 rounded-2xl border border-yellow-400/20 bg-white/5 px-5 py-3 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10 hover:border-yellow-400/40"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+              onClick={onAddProduct}
+              className="w-full px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold rounded-lg hover:shadow-lg hover:shadow-yellow-400/50 transition-all"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Add Product
+            </motion.button>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-gradient-to-br from-slate-800 to-black border border-yellow-400/20 rounded-xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <h2 className="text-2xl font-light text-white mb-6">Products ({products.length})</h2>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {products.map((product, idx) => (
+              <motion.div
+                key={product.id}
+                className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-yellow-400/10 hover:border-yellow-400/30 transition-all"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.05 }}
+              >
+                <div className="flex-1">
+                  <p className="text-white font-medium text-sm">{product.name}</p>
+                  <p className="text-yellow-400 text-xs">₹{product.price} • {product.category}</p>
+                </div>
+                <motion.button
+                  onClick={() => onDeleteProduct(product.id)}
+                  className="px-3 py-1 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-all text-xs font-medium"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Delete
+                </motion.button>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+
+      <motion.div
+        className="mt-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+      >
+        <motion.button
+          onClick={onLogout}
+          className="px-6 py-3 bg-white/10 border border-yellow-400/30 text-white font-semibold rounded-lg hover:bg-white/20 transition-all"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          Logout from Admin
+        </motion.button>
+      </motion.div>
+    </div>
+  </div>
+);
+
+const AdminLoginModal = ({ isOpen, password, onPasswordChange, onLogin, onCancel }) => (
+  <AnimatePresence>
+    {isOpen && (
+      <motion.div
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onCancel}
+      >
+        <motion.div
+          className="bg-gradient-to-br from-slate-900 to-black border border-yellow-400/20 rounded-xl p-8 max-w-sm w-full"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2 className="text-2xl font-light text-white mb-2">Admin Access</h2>
+          <p className="text-gray-400 text-sm mb-6">Enter password to access admin panel</p>
+          <input
+            type="password"
+            placeholder="Enter password"
+            value={password}
+            onChange={(e) => onPasswordChange(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && onLogin(password)}
+            className="w-full px-4 py-3 bg-white/10 border border-yellow-400/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400/50 mb-6"
+            autoFocus
+          />
+          <div className="flex gap-3">
+            <motion.button
+              onClick={onCancel}
+              className="flex-1 px-4 py-2 bg-white/10 border border-yellow-400/30 text-white rounded-lg hover:bg-white/20 transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Cancel
             </motion.button>
-
-            {/* Access */}
             <motion.button
-              onClick={() => handleAdminLogin(adminPassword)}
-              className="flex-1 rounded-2xl bg-gradient-to-r from-yellow-400 to-yellow-500 px-5 py-3 text-sm font-semibold text-black shadow-[0_0_25px_rgba(250,204,21,0.25)] transition-all duration-300 hover:shadow-[0_0_40px_rgba(250,204,21,0.45)]"
-              whileHover={{
-                scale: 1.03,
-                y: -1,
-              }}
-              whileTap={{ scale: 0.97 }}
+              onClick={() => onLogin(password)}
+              className="flex-1 px-4 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-all font-semibold"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Access
             </motion.button>
-          </motion.div>
-
-          {/* Bottom Text */}
-          <motion.p
-            className="mt-6 text-center text-xs text-gray-500"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.45 }}
-          >
-            Authorized personnel only
-          </motion.p>
-        </div>
+          </div>
+        </motion.div>
       </motion.div>
-    </motion.div>
+    )}
   </AnimatePresence>
-);  </AnimatePresence>
 );
