@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Menu, X, ShoppingBag, Heart, Search, ChevronDown, Star, Sparkles, ArrowRight, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import { FaWhatsapp } from 'react-icons/fa';
 const STORAGE_KEYS = {
   PRODUCTS: 'lightweightProducts',
   CART: 'lightweightCart'
