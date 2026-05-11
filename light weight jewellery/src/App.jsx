@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaWhatsapp } from "react-icons/fa";
+
 const STORAGE_KEYS = {
   PRODUCTS: 'lightweightProducts',
   CART: 'lightweightCart'
